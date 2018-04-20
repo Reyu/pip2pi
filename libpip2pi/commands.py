@@ -20,9 +20,9 @@ except ImportError:
     has_wheel = False
 
 try:
-    import pip
+    from pip._internal import main as pipmain
 except ImportError:
-    pip = None
+    pipmain = None
 
 class PipError(Exception):
     pass
@@ -381,7 +381,7 @@ def pip2tgz(argv=sys.argv):
         description=dedent("""
             Where PACKAGES are any names accepted by pip (ex, `foo`,
             `foo==1.2`, `-r requirements.txt`), and [PIP_OPTIONS] can be any
-            options accepted by `pip install -d`.
+            options accepted by `pip download -d`.
 
             pip2tgz will download all packages required to install PACKAGES and
             save them to sanely-named tarballs or wheel files in OUTPUT_DIRECTORY.
@@ -410,7 +410,7 @@ def pip2tgz(argv=sys.argv):
     pkg_file_set = lambda: set(globall(full_glob_paths))
     old_pkgs = pkg_file_set()
 
-    pip_run_command(['install', '-d', outdir] + argv[2:])
+    pip_run_command(['download', '-d', outdir] + argv[2:])
 
     os.chdir(outdir)
     new_pkgs = pkg_file_set() - old_pkgs
@@ -428,7 +428,7 @@ def handle_new_wheels(outdir, new_wheels):
     """ Makes sure that, if wheel files are downloaded, their dependencies are
         correctly handled.
 
-        This is necessary because ``pip install -d ...`` was broken
+        This is necessary because ``pip download -d ...`` was broken
         pre-1.5.3[0].
 
         [0]: https://github.com/pypa/pip/issues/1617
