@@ -141,7 +141,7 @@ def pip_get_version():
     return tuple(try_int(x) for x in pip_dist.version.split("."))
 
 def pip_run_command(pip_args):
-    if pip is None:
+    if pipmain is None:
         print("===== WARNING =====")
         print("Cannot `import pip` - falling back to the pip executable.")
         print("This will be deprecated in a future release.")
@@ -155,7 +155,7 @@ def pip_run_command(pip_args):
     if version < (1, 1):
         raise RuntimeError("pip >= 1.1 required, but %s is installed"
                            %(version, ))
-    res = pip.main(pip_args)
+    res = pipmain(pip_args)
     if res != 0:
         raise PipError("pip failed with status %s while running: %s"
                        %(res, pip_args))
